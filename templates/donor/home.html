@@ -1,0 +1,276 @@
+{% extends 'base/indexBase.html' %}
+{% load static %}
+<script src="{% static 'js/donorValidation.js' %}"></script>
+
+
+{% block content %}
+{% if 'donorid' in request.session %}
+{% block navbar %}
+
+<div class="collapse navbar-collapse mx-5" id="navbarSupportedContent">
+  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item mx-3">
+      <a class="nav-link active" aria-current="page" href="/donorHome/">Home</a>
+    </li>
+    <li class="nav-item mx-3">
+      <a class="nav-link active" aria-current="page" href="/viewFood/{{ id }}">Food List</a>
+    </li>
+    <li class="nav-item mx-3">
+      <a class="nav-link active" aria-current="page" href="/viewRequest/">Food Request</a>
+    </li>
+  </ul>
+  <div class="dropdown">
+    <button class="btn btn-info mx-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="dark-blue-text"><i class="fas fa-bars fa-1x"></i></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="/profileInfo/{{ id }}/0">Profile</a></li>
+      <li><a class="dropdown-item position-relative" href="/requestList/">Request List
+        <span class="position-absolute top-0 start-70 translate-middle badge rounded-pill bg-danger">
+          
+          {% if count > 0 %}
+            {{count}}
+            {% else %}
+            0
+          {% endif %}
+            
+          <span class="visually-hidden">unread messages</span>
+        </span>
+      </a></li>
+      <!-- <li><a class="dropdown-item" href="/ratings/0">Review/Ratings</a></li> -->
+    </ul>
+  </div>
+  <a href="/logoutNow/" class="mx-3"><button class="btn btn-danger text-white" type="button"><img width="28" height="28"
+        src="https://img.icons8.com/sf-regular/48/FFFFFF/exit.png" alt="exit" /></button></a>
+</div>
+<style>
+  .dropdown:hover>.dropdown-menu {
+    display: block;
+  }
+
+  .dropdown>.dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+  }
+</style>
+{% endblock navbar %}
+
+{% block floatingButton %}
+<button onclick="addFood();">
+  <div class="floating-container">
+    <div class="floating-button">+</div>
+  </div>
+</button>
+{% endblock floatingButton %}
+<div class="container-fluid" style="margin-top: 50px">
+  <div class="row">
+    {% for food in foods %}
+
+    {% if food.quantity > 0 %}
+    <div class="col-md-3 mb-3">
+      <div class="card h-100">
+        <img src="{{ food.image.url }}" class="card-img-top" alt="..." height="250px" width="100px" />
+        <div class="d-flex align-items-center p-1" style="position: absolute; color: red; background-color: white; ">
+          <b>Stock Left: {{food.quantity}}</b>
+        </div>    
+        {% if food.is_deliverable == 'Yes' %}
+        <div class="position-absolute top-0 end-0 p-1" style=" color: green; background-color: white;">
+          <b>Is Deliverable: {{food.is_deliverable}}</b>
+        </div>
+        {% else %}
+        <div class="position-absolute top-0 end-0 p-1" style=" color: red; background-color: white;">
+          <b>Is Deliverable: {{food.is_deliverable}}</b>
+        </div>
+        {% endif %}
+          
+        <div class="card-body">
+          <div class="d-flex">
+            <h5 class="card-title">{{ food.name }}</h5>
+            {% if food.type == "Pure Veg" %}
+            <p class="text-white bg-success rounded text-center w-25 ml-auto p-0 text-nowrap">{{ food.type }}</p>
+            {% else %}
+            <p class="text-white bg-danger rounded text-center w-25 ml-auto p-0 text-nowrap">{{ food.type }}</p>
+            {% endif %}
+          </div>
+          <div class="description-container">
+            <p class="card-text description">{{ food.description|truncatewords:50 }}</p>
+            {% if food.description|wordcount > 50 %}
+            <p class="full-description">{{ food.description }}</p>
+            <p class="read-more m-0 p-0"><a href="#" class="toggle-description">Read More</a></p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="text-center mt-2 p-0"><a href="/getFood/{{food.id}}/{{food.donor_id}}/0"><button class="btn btn-success text-center">Get Details</button></a></div>
+      <p class="card-text mx-2 my-2"><small class="text-muted">{{ food.created_date }}</small></p>
+    </div>
+  </div>
+  {% endif %}
+
+
+  {% endfor %}
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addFoodModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="addFoodForm" action="/addFood/1" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title text-primary" id="heading">Add Food</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-bs-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="selectField">Food Name</label>
+            <select class="form-control" id="name" name="name">
+              <option value="-1"  selected d>Select Food</option>
+              <option value="Rice">Rice</option>
+              <option value="Curd Rice">Curd Rice</option>
+              <option value="Biryani">Biryani</option>
+              <option value="Chapati">Chapati</option>
+              <option value="Paisa">Paisa</option>
+              <option value="Samber">Samber</option>
+              <option value="Koorma">Koorma</option>
+              <option value="Palya">Palya</option>
+            </select>
+            <!-- <div class="error text-danger font-weight-bold"></div> -->
+          </div>
+
+          <!-- Select Field -->
+          <div class="form-group">
+            <label for="selectField">Food Category</label>
+            <select class="form-control" id="category" name="category">
+              <option value="-1"  selected d>Select Category</option>
+              <option value="0">Breakfast</option>
+              <option value="1">Lunch</option>
+            </select>
+            <!-- <div class="error text-danger font-weight-bold"></div> -->
+          </div>
+
+          <div class="form-group">
+            <label for="selectField">Food Type</label>
+            <select class="form-control" id="type" name="type">
+              <option value="-1"  selected d>Select Type</option>
+              <option value="Pure Veg">Pure Veg</option>
+              <option value="Non-Veg">Non-Veg</option>
+            </select>
+            <!-- <div class="error text-danger font-weight-bold"></div> -->
+          </div>
+
+          <!-- Checkbox Fields -->
+          <div class="form-group">
+            <label>Ingredients</label>
+            <br>
+            {% for ingredient in ingredients %}
+            <label for="checkbox{{ forloop.counter }}"></label>
+            <input type="checkbox" id="checkbox{{ forloop.counter }}" name="ingredients" value="{{ ingredient }}"> {{ ingredient }}</label>
+          {% endfor %}
+          </div>
+
+          <!-- Input Text Field -->
+          <div class="form-group">
+            <label for="textInput">Food Quantity</label>
+            <input type="number" class="form-control" id="qty" name="qty" placeholder="Enter quantity" >
+            <!-- <div class="error text-danger font-weight-bold"></div> -->
+          </div>
+
+           <!-- Textarea Field -->
+           <div class="form-group">
+            <label for="textareaField">Time of Preparation:</label>
+            <input class="form-control" id="preparation_time" placeholder="Time of Preparation" name="preparation_time" ></input>
+          </div>
+
+          <!-- Textarea Field -->
+          <div class="form-group">
+            <label for="textareaField">Description:</label>
+            <textarea class="form-control" id="description" placeholder="Description" name="description"
+              rows="3" ></textarea>
+              <!-- <div class="error text-danger font-weight-bold"></div> -->
+          </div>
+
+          <!-- File Field -->
+          <div class="form-group">
+            <label for="fileField">Image</label>
+            <input type="file" class="form-control py-2 rounded-0" id="images" name="images" placeholder="Image"
+              accept=".png,.jpg,.jpeg,.webp" >
+              <!-- <div class="error text-danger font-weight-bold"></div> -->
+          </div>
+
+          <!-- Checkbox Field with default value "No" -->
+        <div class="form-group">
+          <div class="form-check float-right">
+            <label class="form-check-label mr-5" for="is_del">Is Deliverable</label>
+              <input class="form-check-input" type="checkbox" id="is_del" name="is_del" value="Yes">
+          </div>
+        </div>
+
+        <div class="error text-danger font-weight-bold text-center"></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  flatpickr("#preparation_time", {
+    enableTime: true,
+    noCalendar: false,  // Allow selecting dates
+    dateFormat: "Y-m-d H:i",  // Adjust the date format to include both date and time
+    time_24hr: true,
+    minuteIncrement: 1,
+    defaultDate: "",  // Set default date to today
+    timezone: "Asia/Kolkata", // Set the timezone to Indian Standard Time
+    minDate: "today", // Disable past dates
+    maxDate: new Date().fp_incr(0) // Disable future dates (here set to 1 year from today)
+  });
+</script>
+
+
+<style>
+  .description-container .full-description {
+    display: none;
+  }
+
+  .description-container.show-full-description .full-description {
+    display: block;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.toggle-description').forEach(item => {
+      item.addEventListener('click', event => {
+          event.preventDefault();
+          let descriptionContainer = item.closest('.description-container');
+          let fullDescription = descriptionContainer.querySelector('.full-description');
+          let truncatedDescription = descriptionContainer.querySelector('.description');
+
+          if (fullDescription.style.display === 'none') {
+              fullDescription.style.display = 'block';
+              truncatedDescription.style.display = 'none';
+              item.textContent = 'Read Less';
+          } else {
+              fullDescription.style.display = 'none';
+              truncatedDescription.style.display = 'block';
+              item.textContent = 'Read More';
+          }
+      });
+  });
+</script>
+{% else %}
+    <script>
+        window.location.href = "{% url 'donorLogin' %}";
+    </script>
+{% endif %}
+{% endblock content %}
+  

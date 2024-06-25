@@ -1,0 +1,43 @@
+{% extends 'base/indexBase.html' %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+
+{% block content %}
+<div style="margin-top: 80px;">
+    <div class="container-fluid">
+        <div class="card hoverable" style="border-radius: 35px; background-color: white">
+            <div class="d-flex justify-content-center">
+                <span class="badge badge-success w-50 my-3">
+                    <h1>Graph Images</h1>
+                </span>
+            </div>
+            <div class="card-body mb-0 text-center" style="display: flex; justify-content: space-evenly;">
+                <div>
+                    <h4 class="text-primary">Confusion Random Forest</h4>
+                    <img class="my-2" src="{% static 'images/graph1.png' %}" height="400" width="400"/>
+                    <h4 class="text-primary">97.2%</h4>
+                </div>
+                <div>
+                    <h4 class="text-primary">Random Forest for SVC</h4>
+                    <img class="my-2" src="{% static 'images/graph2.png' %}" height="400" width="400"/>
+                    <h4 class="text-primary">94.4%</h4>
+                </div>
+                <div>
+                    <h4 class="text-primary">KNN</h4>
+                    <img class="my-2" src="{% static 'images/graph3.png' %}" height="400" width="400"/>
+                    <h4 class="text-primary">83.3%</h4>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <div>
+                    <h4 class="text-primary" style="margin-left: 260px;">Combine Graph</h4>
+                    <img class="my-2" src="{% static 'images/combine.jpg' %}" height="400" width="700"/>
+                </div>
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+    

@@ -1,0 +1,177 @@
+{% extends 'base/indexBase.html' %}
+{% load static %}
+
+{% block content %}
+{% block navbar %}
+<div class="collapse navbar-collapse mx-5" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="/userHome/">Home</a>
+      </li>
+    </ul>
+    <a href="/userHome/" class="mx-3"><button class="btn btn-danger text-white" type="button"><b>Back</b></button></a>
+  </div>
+{% endblock navbar %}
+<div class="" style="margin-top: 80px;">
+   
+    <div class="page-content page-container mb-xl-5" id="page-content" style="margin-left: 220px; margin-top: 50px;">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center align-items-center">
+                <div class="col-xl-12 col-md-12">
+                    <div class="card user-card-full">
+                        <div class="row m-l-0 m-r-0">
+                            <div class="col-sm-4 bg-c-lite-green user-profile"
+                                style="background-image: linear-gradient(to bottom, #956bd1, #c369bc, #dd70a6, #ea7e93, #ed9087, #f39b7b, #f3a871, #edb76a, #e3c655, #ccd747, #a5e949, #5ffb60);">
+                                <div class="card-block text-center text-white py-5 px-5">
+                                    <div class="m-b-25">
+                                        {% if user.gender == 1 %}
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="img-radius img-fluid" alt="User-Profile-Image" style="border-radius: 50%;">
+                                        {% elif user.gender == 2 %}
+                                        <img src="{% static 'images/female_user.avif' %}" class="img-radius img-fluid" alt="User-Profile-Image" style="border-radius: 50%;">
+                                        {% else %}
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                                            class="img-radius img-fluid" alt="User-Profile-Image" style="border-radius: 50%;">
+                                        {% endif %}
+
+                                    </div>
+                                    <h3 class="f-w-600 mt-3">{{ user.name }}</h3>
+                                    <h6>Excess Food User</h6>
+                                    <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 py-5 px-5">
+                                <div class="card-block">
+                                    <h3 class="m-b-20 p-b-5 b-b-default f-w-600 text-center mb-3">Information</h3>
+                                    <div class="row my-3">
+                                        <div class="col-sm-6">
+                                            <h6 class="m-b-10 f-w-600">Email : </h6>
+                                            <h6 class="text-muted f-w-400">{{ user.email }}</h6>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h6 class="m-b-10 f-w-600">Contact Number :</h6>
+                                            <h6 class="text-muted f-w-400">{{ user.contact }}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row my-3">
+                                        <div class="col-sm-6">
+                                            <h6 class="m-b-10 f-w-600">Gender : </h6>
+
+                                            {% if user.gender == 1 %}
+                                            <h6 class="text-muted f-w-400">Male</h6>
+                                            {% elif user.gender == 2 %}
+                                            <h6 class="text-muted f-w-400">Female</h6>
+                                            {% else %}
+                                            <h6 class="text-muted f-w-400">Others</h6>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h6 class="m-b-10 f-w-600">Address :</h6>
+                                            <h6 class="text-muted f-w-400">{{ user.address }}</h6>
+                                        </div>
+                                    </div>
+                                    <h3 class="m-b-20 p-b-5 b-b-default f-w-600 text-center mb-4">Account Information
+                                    </h3>
+                                    <div class="row my-3">
+                                        <div class="col-sm-6">
+                                            <h6 class="m-b-10 f-w-600">Account Status : </h6>
+                                            {% if user.is_enabled == 1 %}
+                                            <h6 class="text-white bg-success p-1 rounded text-center w-50 text-nowrap">
+                                                Activated</h6>
+                                            {% else %}
+                                            <h6 class="text-white bg-danger p-1 rounded text-center w-50 text-nowrap">
+                                                De-Activated</h6>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h6 class="m-b-10 f-w-600">Account Verification :</h6>
+                                            {% if user.is_verified == 1 %}
+                                            <h6 class="text-white bg-success p-1 rounded text-center w-50 text-nowrap">
+                                                Verified</h6>
+                                            {% else %}
+                                            <h6 class="text-white bg-danger p-1 rounded text-center w-50 text-nowrap">
+                                                Not Verified</h6>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row my-5">
+                                        <div class="col-sm-12" style="margin-left: 220px;">
+                                            <h6 class="m-b-10 f-w-600">Edit Profile :</h6>
+                                            <button class="btn btn-warning" onclick="editProfile();"><i
+                                                    class="fa-regular fa-pen-to-square fa-lg"></i> <b>Edit</b></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="editProfile" action="/editProfile/{{user.id}}/1" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title text-primary" id="heading">Edit Profile</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-bs-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- Input Text Field -->
+                        <div class="form-group">
+                            <label for="textInput">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter name"
+                                value="{{user.name}}" >
+                        </div>
+
+                        <!-- Input Text Field -->
+                        <div class="form-group">
+                            <label for="textInput">Contact Number</label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter name"
+                                value="{{user.contact}}" readonly>
+                        </div>
+
+                        <!-- Input Text Field -->
+                        <div class="form-group">
+                            <label for="textInput">Email</label>
+                            <input type="text" class="form-control" id="email" name="email" placeholder="Enter name"
+                                value="{{user.email}}" >
+                        </div>
+
+                        <!-- Select Field -->
+                        <div class="form-group">
+                            <label for="selectField">Gender</label>
+                            <select class="form-control" id="gender" name="gender" >
+                                <option value="{{ user.gender }}" selected >Select Gender</option>
+                                <option value="1">Male</option>
+                                <option value="2">Female</option>
+                                <option value="3">Others</option>
+                            </select>
+                        </div>
+
+                        <!-- Textarea Field -->
+                        <div class="form-group">
+                            <label for="textareaField">Address:</label>
+                            <textarea class="form-control" id="address" placeholder="address" name="address"
+                                rows="3">{{ user.address }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="error text-danger font-weight-bold text-center"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
